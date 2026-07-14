@@ -5,14 +5,18 @@ import { useEffect, useState } from 'react';
 const TOTAL = 40;
 
 export default function Stats() {
+  const [mounted, setMounted] = useState(false);
   const [solved, setSolved] = useState(0);
 
   useEffect(() => {
+    setMounted(true);
     const solvedList = JSON.parse(localStorage.getItem('solved') || '[]');
     setSolved(solvedList.length);
   }, []);
 
   const percent = Math.round((solved / TOTAL) * 100);
+
+  if (!mounted) return null;
 
   return (
     <section className="max-w-5xl mx-auto px-16 sm:px-6 py-4 sm:py-6">
