@@ -1,11 +1,8 @@
 import { NextResponse } from 'next/server';
 
-// POST /api/review
-// کد کاربر رو می‌گیره و از Gemini API فیدبک می‌گیره
 export async function POST(request: Request) {
   const { code, challenge } = await request.json();
 
-  // پرامپت فارسی برای Gemini — نقش مربی برنامه‌نویسی
   const prompt = `
 تو یه مربی برنامه‌نویسی هستی. کاربر داره چالش زیر رو حل می‌کنه:
 عنوان: ${challenge.title}
@@ -22,7 +19,6 @@ ${code}
 جواب رو به فارسی و کوتاه بده.
 `;
 
-  // ارسال به Gemini API — key از .env.local میاد، نه مستقیم تو کد
   const res = await fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
     {
@@ -35,8 +31,8 @@ ${code}
   );
 
   const data = await res.json();
+  console.log('Gemini full response:', JSON.stringify(data));
 
-  // استخراج متن از ساختار پاسخ Gemini
   const feedback = data.candidates?.[0]?.content?.parts?.[0]?.text || 'خطا در دریافت پاسخ';
 
   return NextResponse.json({ feedback });
