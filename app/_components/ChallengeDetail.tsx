@@ -11,27 +11,21 @@ type Challenge = {
 };
 
 export default function ChallengeDetail({ challenge }: { challenge: Challenge }) {
-  // کنترل نمایش editor
+  const [mounted, setMounted] = useState(false);
   const [showEditor, setShowEditor] = useState(false);
-  // کد فعلی کاربر — با starterCode شروع میشه
   const [code, setCode] = useState(challenge.starterCode);
-  // فیدبک دریافتی از AI
   const [feedback, setFeedback] = useState('');
-  // وضعیت loading هنگام درخواست به AI
   const [loading, setLoading] = useState(false);
-  // آیا این چالش قبلاً حل شده؟
   const [solved, setSolved] = useState(false);
 
-  // چک کردن localStorage برای دیدن اینکه آیا این چالش قبلاً حل شده
   useEffect(() => {
+    setMounted(true);
     const solvedList = JSON.parse(localStorage.getItem('solved') || '[]');
     setSolved(solvedList.includes(challenge.id));
   }, [challenge.id]);
 
-  // ذخیره‌ی id چالش تو localStorage به‌عنوان حل‌شده
   function markAsSolved() {
     const solvedList = JSON.parse(localStorage.getItem('solved') || '[]');
-    // جلوگیری از اضافه شدن تکراری
     if (!solvedList.includes(challenge.id)) {
       solvedList.push(challenge.id);
       localStorage.setItem('solved', JSON.stringify(solvedList));
@@ -39,7 +33,6 @@ export default function ChallengeDetail({ challenge }: { challenge: Challenge })
     setSolved(true);
   }
 
-  // ارسال کد به Route Handler که اون رو به Gemini API می‌فرسته
   async function handleReview() {
     setLoading(true);
     setFeedback('');
@@ -52,6 +45,9 @@ export default function ChallengeDetail({ challenge }: { challenge: Challenge })
     setFeedback(data.feedback);
     setLoading(false);
   }
+
+  // جلوگیری از hydration error — صبر می‌کنیم تا کامپوننت تو مرورگر mount بشه
+  if (!mounted) return null;
 
   return (
     <div>
