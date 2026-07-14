@@ -1,4 +1,18 @@
-export const challenges = [
+ type Difficulty = 'easy' | 'medium' | 'hard';
+type Category = 'array' | 'string' | 'object' | 'function' | 'logic';
+
+export type Challenge = {
+  id: number;
+  title: string;
+  difficulty: Difficulty;
+  category: Category;
+  description: string;
+  starterCode: string;
+};
+
+ 
+ 
+export const challenges: Challenge[] = [
   {
     id: 1,
     title: 'معکوس کردن آرایه — reverseArray()',
