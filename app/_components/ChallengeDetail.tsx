@@ -42,11 +42,12 @@ export default function ChallengeDetail({ challenge }: { challenge: Challenge })
       body: JSON.stringify({ code, challenge }),
     });
     const data = await res.json();
+    console.log('API Response:', data);
+    console.log('Feedback type:', typeof data.feedback);
     setFeedback(data.feedback);
     setLoading(false);
   }
 
-  // جلوگیری از hydration error — صبر می‌کنیم تا کامپوننت تو مرورگر mount بشه
   if (!mounted) return null;
 
   return (
