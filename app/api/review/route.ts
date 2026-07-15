@@ -3,28 +3,17 @@ import { NextResponse } from 'next/server';
 export async function POST(request: Request) {
   const { code, challenge } = await request.json();
 
-  const prompt = `
-تو یه مربی برنامه‌نویسی هستی. کاربر داره چالش زیر رو حل می‌کنه:
-عنوان: ${challenge.title}
-توضیح: ${challenge.description}
-
-کد کاربر:
-${code}
-
-لطفاً کد رو بررسی کن و فیدبک بده:
-۱. آیا منطق درسته؟
-۲. چه مشکلی داره؟ (اگه داره)
-۳. چطور می‌شه بهترش کرد؟
-
-جواب رو به فارسی و کوتاه بده.
-`;
+  const prompt = `تو یه مربی برنامه‌نویسی هستی...`;
 
   try {
-     const res = await fetch(
-     `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`,
       {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'X-goog-api-key': process.env.GEMINI_API_KEY || '',
+        },
         body: JSON.stringify({
           contents: [{ parts: [{ text: prompt }] }],
         }),
@@ -32,17 +21,7 @@ ${code}
     );
 
     const data = await res.json();
-    console.log('Gemini Response:', JSON.stringify(data, null, 2));
-
-    if (!res.ok) {
-      console.error('Gemini Error:', data);
-      return NextResponse.json(
-        { feedback: `خطا: ${data.error?.message || 'خطای نامشخص'}` },
-        { status: res.status }
-      );
-    }
-
-    const feedback = data.candidates?.[0]?.content?.parts?.[0]?.text || 'خطا در دریافت پاسخ';
+    const feedback = data.candidates?.[0]?.content?.parts?.[0]?.text || 'خطا';
 
     return NextResponse.json({ feedback });
   } catch (error) {
