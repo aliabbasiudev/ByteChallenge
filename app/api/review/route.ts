@@ -3,7 +3,22 @@ import { NextResponse } from 'next/server';
 export async function POST(request: Request) {
   const { code, challenge } = await request.json();
 
-  const prompt = `تو یه مربی برنامه‌نویسی هستی...`;
+const prompt = `شما یک متخصص بررسی کد هستید. لطفاً کد زیر را تحلیل کنید و فقط فیدبک فنی بدهید:
+
+**چالش:** ${challenge.title}
+**توضیح:** ${challenge.description}
+
+**کد کاربر:**
+\`\`\`javascript
+${code}
+\`\`\`
+
+لطفاً به این سوالات پاسخ بدید:
+1. آیا منطق کد درست است؟
+2. چه اشتباه یا مشکلی دارد؟
+3. چطور می‌توان بهتر کرد؟
+
+جواب را فقط به فارسی و خلاصه بدهید.`;
 
   try {
     const res = await fetch(
